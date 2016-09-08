@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 
 public class NewBehaviourScript : MonoBehaviour {
 
+	Text myText;
 	private string path = "http://api.jugemkey.jp/api/horoscope/free";
 	public JsonData jsonData;
 
@@ -26,6 +27,11 @@ public class NewBehaviourScript : MonoBehaviour {
 
 			jsonData = JsonMapper.ToObject(aw);
 
+//			myText = GetComponentInChildren <Text>();
+			GameObject obj = GameObject.FindGameObjectWithTag("myText");
+			myText = obj.GetComponentInChildren<Text> ();
+
+			myText.text = "";
 
 		}
 	}
@@ -43,15 +49,18 @@ public class NewBehaviourScript : MonoBehaviour {
 		for (int i = 0; i < 12; i++) {
 			string sign = (string)jsonData ["horoscope"] ["Today"] [i] ["sign"];
 			if (sign.Equals (sss)) {
-				Debug.Log (sss);
-				Debug.Log ("運勢："+jsonData ["horoscope"] ["Today"] [i] ["content"]);
-				Debug.Log ("金運："+jsonData ["horoscope"] ["Today"] [i] ["money"]);
-				Debug.Log ("仕事運："+jsonData ["horoscope"] ["Today"] [i] ["job"]);
-				Debug.Log ("恋愛運："+jsonData ["horoscope"] ["Today"] [i] ["love"]);
-				Debug.Log ("全体運："+jsonData ["horoscope"] ["Today"] [i] ["total"]);
-				Debug.Log ("総合順位："+jsonData ["horoscope"] ["Today"] [i] ["rank"]+"位");
-				Debug.Log ("ラッキーカラー："+jsonData ["horoscope"] ["Today"] [i] ["color"]);
-				Debug.Log ("ラッキーアイテム："+jsonData ["horoscope"] ["Today"] [i] ["item"]);
+
+				GameObject obj = GameObject.FindGameObjectWithTag("myText");
+				myText = obj.GetComponentInChildren<Text> ();
+				myText.text = sss + "\n"
+					+ "運勢："+jsonData ["horoscope"] ["Today"] [i] ["content"] + "\n"
+					+ "金運："+jsonData ["horoscope"] ["Today"] [i] ["money"] + "\n"
+					+ "仕事運："+jsonData ["horoscope"] ["Today"] [i] ["job"] + "\n"
+					+ "恋愛運："+jsonData ["horoscope"] ["Today"] [i] ["love"] + "\n"
+					+ "全体運："+jsonData ["horoscope"] ["Today"] [i] ["total"] + "\n"
+					+ "総合順位："+jsonData ["horoscope"] ["Today"] [i] ["rank"]+"位" + "\n"
+					+ "ラッキーカラー："+jsonData ["horoscope"] ["Today"] [i] ["color"] + "\n"
+					+ "ラッキーアイテム："+jsonData ["horoscope"] ["Today"] [i] ["item"];
 			}
 		}
 
