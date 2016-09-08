@@ -8,24 +8,25 @@ using System.Text.RegularExpressions;
 public class NewBehaviourScript : MonoBehaviour {
 
 	private string path = "http://api.jugemkey.jp/api/horoscope/free";
-	public string dd = "";
 	public JsonData jsonData;
-	public DecodeData[] decodeData;
-
-	public Text text;
-	public string aw;
 
 	IEnumerator Start() {
-		dd = DateTime.Now.ToString("yyyy/MM/dd");
+		string dd = DateTime.Now.ToString("yyyy/MM/dd");
 		using (WWW www = new WWW (path + "/" + dd)) {
 			yield return www;
 
 			if (!string.IsNullOrEmpty (www.error)) {
 				yield break;
 			}
-			aw = www.text.Replace (dd, "hoge");
-			jsonData = JsonMapper.ToObject(www.text);
-			decodeData = JsonMapper.ToObject<DecodeData[]>(aw);
+
+//			Debug.Log (www.text);
+			string aw = www.text.Replace (dd, "Today");
+
+//			Debug.Log (aw);
+
+			jsonData = JsonMapper.ToObject(aw);
+
+
 		}
 	}
 
@@ -33,21 +34,26 @@ public class NewBehaviourScript : MonoBehaviour {
 	{
 		Dropdown dropM = GameObject.FindGameObjectWithTag("month").GetComponent<Dropdown>();
 		Dropdown dropD = GameObject.FindGameObjectWithTag("day").GetComponent<Dropdown>();
-//		Debug.Log (dropM.value + ":" + dropD.value);
 		if (dropM.value == 0 || dropD.value == 0) {
 			return;
 		}
-		string sss = GetAtomFromBirthday (dropM.value.ToString("00"), dropD.value.ToString("00"));
-		Debug.Log (sss);
-//		Debug.Log (decodeData[0].horoscope.hoge[0].content);
 
-//		foreach(JsonData r in jsonData ["horoscope"] [dd] ) {
-//			string sign = (string)r ["sign"];
-//			if (sign.Equals (sss)) {
-//				Debug.Log ((string)r ["content"]);
-//			}
-//		}
-//			Debug.Log ((string)jsonData ["horoscope"] [dd] [result] ["content"]);
+		string sss = GetAtomFromBirthday (dropM.value.ToString("00"), dropD.value.ToString("00"));
+
+		for (int i = 0; i < 12; i++) {
+			string sign = (string)jsonData ["horoscope"] ["Today"] [i] ["sign"];
+			if (sign.Equals (sss)) {
+				Debug.Log (sss);
+				Debug.Log ("運勢："+jsonData ["horoscope"] ["Today"] [i] ["content"]);
+				Debug.Log ("金運："+jsonData ["horoscope"] ["Today"] [i] ["money"]);
+				Debug.Log ("仕事運："+jsonData ["horoscope"] ["Today"] [i] ["job"]);
+				Debug.Log ("恋愛運："+jsonData ["horoscope"] ["Today"] [i] ["love"]);
+				Debug.Log ("全体運："+jsonData ["horoscope"] ["Today"] [i] ["total"]);
+				Debug.Log ("総合順位："+jsonData ["horoscope"] ["Today"] [i] ["rank"]+"位");
+				Debug.Log ("ラッキーカラー："+jsonData ["horoscope"] ["Today"] [i] ["color"]);
+				Debug.Log ("ラッキーアイテム："+jsonData ["horoscope"] ["Today"] [i] ["item"]);
+			}
+		}
 
 	}
 
@@ -98,26 +104,5 @@ public class NewBehaviourScript : MonoBehaviour {
 		return "";
 	}
 
-	public class DecodeData
-	{
-		public Horoscope horoscope;
-	}
-	public class Horoscope
-	{
-		public Hoge[] hoge;
-	}
-	public class Hoge
-	{
-		public string content;
-		public string item;
-		public int money;
-		public int total;
-		public int job;
-		public string color;
-		public int day;
-		public int love;
-		public int rank;
-		public string sign;
-	}
 }
 
