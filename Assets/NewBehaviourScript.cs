@@ -7,9 +7,12 @@ using System.Text.RegularExpressions;
 
 public class NewBehaviourScript : MonoBehaviour {
 
-	Text myText;
+	public Text myText;
 	private string path = "http://api.jugemkey.jp/api/horoscope/free";
 	public JsonData jsonData;
+	public string seiza;
+	public string msg;
+	public int count = 0;
 
 	IEnumerator Start() {
 		string dd = DateTime.Now.ToString("yyyy/MM/dd");
@@ -44,15 +47,13 @@ public class NewBehaviourScript : MonoBehaviour {
 			return;
 		}
 
-		string sss = GetAtomFromBirthday (dropM.value.ToString("00"), dropD.value.ToString("00"));
+		seiza = GetAtomFromBirthday (dropM.value.ToString("00"), dropD.value.ToString("00"));
 
 		for (int i = 0; i < 12; i++) {
 			string sign = (string)jsonData ["horoscope"] ["Today"] [i] ["sign"];
-			if (sign.Equals (sss)) {
+			if (sign.Equals (seiza)) {
 
-				GameObject obj = GameObject.FindGameObjectWithTag("myText");
-				myText = obj.GetComponentInChildren<Text> ();
-				myText.text = sss + "\n"
+				msg = seiza + "\n"
 					+ "運勢："+jsonData ["horoscope"] ["Today"] [i] ["content"] + "\n"
 					+ "金運："+jsonData ["horoscope"] ["Today"] [i] ["money"] + "\n"
 					+ "仕事運："+jsonData ["horoscope"] ["Today"] [i] ["job"] + "\n"
@@ -63,12 +64,19 @@ public class NewBehaviourScript : MonoBehaviour {
 					+ "ラッキーアイテム："+jsonData ["horoscope"] ["Today"] [i] ["item"];
 			}
 		}
+		count = 0;
 
 	}
 
 	// Update is called once per frame
 	void Update () {
 
+		if (msg.Length == 0)
+			return;
+		count++;
+		if (count > msg.Length)
+			return;
+		myText.text = msg.Substring (0, count);
 	}
 
 	public string GetAtomFromBirthday(string month, string day)
